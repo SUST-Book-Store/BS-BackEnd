@@ -8,6 +8,7 @@ class BackendAdminApplicationTests {
 
 	@Test
 	void contextLoads() {
+		System.out.println("Test123");
 	}
 
 }
