@@ -1,0 +1,8 @@
+server:
+  port: 3000
+spring:
+  datasource:
+    username: spring
+    password: Java12345
+    url: jdbc:mysql://allnet.cyanine.top/spring?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8
+    driver-class-name: com.mysql.cj.jdbc.Driver
