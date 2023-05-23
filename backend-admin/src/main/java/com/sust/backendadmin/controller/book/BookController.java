@@ -2,7 +2,7 @@ package com.sust.backendadmin.controller.book;
 
 import cn.hutool.core.util.StrUtil;
 import com.sust.backendadmin.pojo.Result;
-import com.sust.backendadmin.service.book.BookService;
+import com.sust.backendadmin.mapper.service.book.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.sust.backendadmin.service.impl.book;
+package com.sust.backendadmin.mapper.service.impl.book;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sust.backendadmin.mapper.BookMapper;
+import com.sust.backendadmin.mapper.service.book.BookService;
 import com.sust.backendadmin.pojo.Book;
-import com.sust.backendadmin.service.book.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
