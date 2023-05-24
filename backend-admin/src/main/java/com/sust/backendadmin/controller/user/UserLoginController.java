@@ -2,7 +2,7 @@ package com.sust.backendadmin.controller.user;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.sust.backendadmin.mapper.service.user.UserLoginService;
+import com.sust.backendadmin.service.user.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

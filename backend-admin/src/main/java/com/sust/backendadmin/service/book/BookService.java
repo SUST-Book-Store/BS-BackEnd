@@ -1,4 +1,4 @@
-package com.sust.backendadmin.mapper.service.book;
+package com.sust.backendadmin.service.book;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;

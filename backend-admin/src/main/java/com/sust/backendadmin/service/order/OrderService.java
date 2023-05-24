@@ -1,4 +1,4 @@
-package com.sust.backendadmin.mapper.service.order;
+package com.sust.backendadmin.service.order;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.IService;

@@ -1,8 +1,8 @@
-package com.sust.backendadmin.mapper.service.impl.cart;
+package com.sust.backendadmin.service.impl.cart;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sust.backendadmin.mapper.CartMapper;
-import com.sust.backendadmin.mapper.service.cart.CartService;
+import com.sust.backendadmin.service.cart.CartService;
 import com.sust.backendadmin.pojo.Cart;
 import com.sust.backendadmin.pojo.Result;
 import org.springframework.beans.factory.annotation.Autowired;

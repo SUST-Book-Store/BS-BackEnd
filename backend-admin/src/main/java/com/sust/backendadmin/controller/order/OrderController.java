@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.sust.backendadmin.dto.DetailOrderDto;
 import com.sust.backendadmin.dto.OrderDto;
 import com.sust.backendadmin.pojo.Result;
-import com.sust.backendadmin.mapper.service.order.OrderService;
+import com.sust.backendadmin.service.order.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

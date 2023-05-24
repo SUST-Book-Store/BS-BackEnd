@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.sust.backendadmin.pojo.Cart;
 import com.sust.backendadmin.pojo.Result;
-import com.sust.backendadmin.mapper.service.cart.CartService;
+import com.sust.backendadmin.service.cart.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

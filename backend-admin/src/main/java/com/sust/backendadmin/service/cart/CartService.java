@@ -1,4 +1,4 @@
-package com.sust.backendadmin.mapper.service.cart;
+package com.sust.backendadmin.service.cart;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sust.backendadmin.dto.CartDto;

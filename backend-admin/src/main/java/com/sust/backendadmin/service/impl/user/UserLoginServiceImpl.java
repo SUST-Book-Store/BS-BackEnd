@@ -1,11 +1,11 @@
-package com.sust.backendadmin.mapper.service.impl.user;
+package com.sust.backendadmin.service.impl.user;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sust.backendadmin.mapper.UserLoginMapper;
 import com.sust.backendadmin.pojo.User;
-import com.sust.backendadmin.mapper.service.user.UserLoginService;
+import com.sust.backendadmin.service.user.UserLoginService;
 import com.sust.backendadmin.utils.GetEncryptedStrUtil;
 import com.sust.backendadmin.utils.UserTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;

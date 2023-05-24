@@ -1,4 +1,4 @@
-package com.sust.backendadmin.mapper.service.user;
+package com.sust.backendadmin.service.user;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.sust.backendadmin.pojo.User;
