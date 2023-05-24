@@ -20,20 +20,31 @@ public class UserTokenUtil {
 
 //  获取UserId，若过期则返回-1
     public static int GetUserIdByToken(String userToken){
-        JwtParser parser = Jwts.parser();
         int userid;
-        try {
-            Claims claims = parser.setSigningKey(secretKey)
+        if (ValidateUserToken(userToken)){
+            Claims claims = Jwts.parser().setSigningKey(secretKey)
                     .parseClaimsJws(userToken)
                     .getBody();
             userid = Integer.parseInt(claims.get("userid").toString());
-            long expiration = claims.getExpiration().getTime();
-            if (expiration < System.currentTimeMillis()) {
-                userid = -1;
-            }
-        } catch (ExpiredJwtException e) {
+        } else {
             userid = -1;
         }
         return userid;
+    }
+
+    public static boolean ValidateUserToken(String token) {
+        boolean isValid = false;
+        try {
+            Claims claims = Jwts.parser().setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+            long expiration = claims.getExpiration().getTime();
+            if (expiration >= System.currentTimeMillis()) {
+                isValid = true;
+            }
+        } catch (ExpiredJwtException e) {
+            System.out.println("Expired Session Token");
+        }
+        return isValid;
     }
 }

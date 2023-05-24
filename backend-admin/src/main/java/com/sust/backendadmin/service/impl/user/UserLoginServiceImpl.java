@@ -19,37 +19,35 @@ public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> im
     private UserLoginMapper userLoginMapper;
 
     @Override
-    public JSONObject getUserLoginResult(String username, String password) {
+    public JSONObject getUserLoginResult(String phone, String password) {
         QueryWrapper<User> loginQueryWrapper =new QueryWrapper<>();
-        loginQueryWrapper.eq("username", username).eq("password", GetEncryptedStrUtil.MD5(password));
+        loginQueryWrapper.eq("phone", phone).eq("password", GetEncryptedStrUtil.MD5(password));
         List<User> userList = userLoginMapper.selectList(loginQueryWrapper);
 
         JSONObject resp = new JSONObject();
         if (!userList.isEmpty()) {
-            JSONObject userIdentity = new JSONObject();
             String token = UserTokenUtil.GenerateUserToken(userList.get(0).getUserId());
-            userIdentity.put("userToken", token);
             resp.put("status", 0);
-            resp.put("data", userIdentity);
+            resp.put("accessToken", token);
 
         } else {
             resp.put("status", -1);
             resp.put("msg", "用户名或密码错误");
         }
-
         return resp;
     }
     @Override
-    public JSONObject getUserRegisterResult(String username, String password, String sex) {
+    public JSONObject getUserRegisterResult(String phone, String username, String password, String sex) {
         QueryWrapper<User> loginQueryWrapper =new QueryWrapper<>();
-        loginQueryWrapper.eq("username", username);
+        loginQueryWrapper.eq("phone", phone);
         List<User> userList = userLoginMapper.selectList(loginQueryWrapper);
         JSONObject resp = new JSONObject();
         if (!userList.isEmpty()) {
             resp.put("status", -100);
-            resp.put("msg", "该用户名已存在");
+            resp.put("msg", "该用户已存在");
         } else {
             User newUser = new User();
+            newUser.setPhone(phone);
             newUser.setUsername(username);
             newUser.setPassword(GetEncryptedStrUtil.MD5(password));
             newUser.setSex(sex);
@@ -64,7 +62,6 @@ public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> im
                 resp.put("msg", "注册失败");
             }
         }
-
         return resp;
     }
 }
