@@ -3,9 +3,11 @@ package com.sust.backendadmin.controller.user;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.sust.backendadmin.service.user.UserService;
+import com.sust.backendadmin.utils.UserTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RestController
@@ -37,14 +39,33 @@ public class UserController {
         return userService.getUserRegisterResult(data.get("phone"), data.get("username"), data.get("password"), data.get("sex"));
     }
 
-    @PostMapping("/validatetoken")
-    public JSONObject validateToken(@RequestBody Map<String, String> data) {
+    @GetMapping("/isValidToken")
+    public JSONObject validateToken(HttpServletRequest request) {
+        String userToken = request.getHeader("token");
         JSONObject resp = new JSONObject();
-        if (StrUtil.isBlank(data.get("token"))) {
+        if (userToken == null || StrUtil.isBlank(userToken)) {
             resp.put("code", -100);
             resp.put("msg", "非法请求");
             return resp;
         }
-        return userService.getTokenValidResult(data.get("token"));
+        return userService.getTokenValidResult(userToken);
+    }
+
+    @GetMapping("/getUserInfo")
+    public JSONObject getUserInfo(HttpServletRequest request) {
+        String userToken = request.getHeader("token");
+        JSONObject resp = new JSONObject();
+        if (userToken == null || StrUtil.isBlank(userToken)) {
+            resp.put("code", -100);
+            resp.put("msg", "非法请求");
+            return resp;
+        }
+        int user_id = UserTokenUtil.GetUserIdByToken(userToken);
+        if (user_id == -1) {
+            resp.put("code", 401);
+            resp.put("msg", "Token无效");
+            return resp;
+        }
+        return userService.getUserDataById(user_id);
     }
 }

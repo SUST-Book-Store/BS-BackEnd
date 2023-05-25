@@ -8,4 +8,5 @@ public interface UserService extends IService<User> {
     JSONObject getUserLoginResult(String phone, String password);
     JSONObject getUserRegisterResult(String phone, String username, String password, String sex);
     JSONObject getTokenValidResult(String token);
+    JSONObject getUserDataById(int user_id);
 }

@@ -64,6 +64,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return resp;
     }
+
+    @Override
+    public JSONObject getUserDataById(int user_id) {
+        QueryWrapper<User> loginQueryWrapper =new QueryWrapper<>();
+        loginQueryWrapper.eq("user_id", user_id);
+        List<User> userList = userMapper.selectList(loginQueryWrapper);
+        JSONObject resp = new JSONObject();
+        if (userList.isEmpty()) {
+            resp.put("code", -100);
+            resp.put("msg", "该用户不存在");
+        } else {
+            User user = userList.get(0);
+            resp.put("code", 0);
+            JSONObject data = new JSONObject();
+            data.put("user_id", user_id);
+            data.put("username", user.getUsername());
+            if (user.getRole().intValue() == 1) {
+                data.put("is_admin", true);
+            } else {
+                data.put("is_admin", false);
+            }
+            resp.put("data", data);
+        }
+        return resp;
+    }
+
     @Override
     public JSONObject getTokenValidResult(String token) {
         boolean isValid = UserTokenUtil.ValidateUserToken(token);

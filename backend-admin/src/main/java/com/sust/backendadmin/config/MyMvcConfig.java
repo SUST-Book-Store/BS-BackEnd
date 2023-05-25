@@ -15,11 +15,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtInterceptor())
                 .addPathPatterns("/**")  // 拦截所有请求，通过判断token是否合法来决定是否需要登录
-                .excludePathPatterns("/user/login", "/user/register");
-//                        "/file/**",
-//                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**", "/api", "/api-docs", "/api-docs/**")
-//                .excludePathPatterns( "/**/*.html", "/**/*.js", "/**/*.css", "/**/*.woff", "/**/*.ttf");
-// 放行静态文件
+                .excludePathPatterns("/user/login", "/user/register", "/user/isValidToken", "/user/getUserInfo");
     }
 
     //将对象注入到容器中

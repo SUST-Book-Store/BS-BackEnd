@@ -16,6 +16,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod) || (token != null && UserTokenUtil.ValidateUserToken(token))){
             return true;
         } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return false;
         }
     }
