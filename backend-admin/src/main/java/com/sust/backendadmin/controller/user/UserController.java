@@ -2,7 +2,7 @@ package com.sust.backendadmin.controller.user;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.sust.backendadmin.service.user.UserLoginService;
+import com.sust.backendadmin.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +10,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
-public class UserLoginController {
+public class UserController {
     @Autowired
-    private UserLoginService userLoginService;
+    private UserService userService;
 
     @PostMapping("/login")
     public JSONObject login(@RequestBody Map<String, String> data) {
@@ -23,7 +23,7 @@ public class UserLoginController {
             resp.put("msg", "非法请求");
             return resp;
         }
-        return userLoginService.getUserLoginResult(data.get("phone"), data.get("password"));
+        return userService.getUserLoginResult(data.get("phone"), data.get("password"));
     }
 
     @PostMapping("/register")
@@ -34,7 +34,7 @@ public class UserLoginController {
             resp.put("msg", "非法请求");
             return resp;
         }
-        return userLoginService.getUserRegisterResult(data.get("phone"), data.get("username"), data.get("password"), data.get("sex"));
+        return userService.getUserRegisterResult(data.get("phone"), data.get("username"), data.get("password"), data.get("sex"));
     }
 
     @PostMapping("/validatetoken")
@@ -45,6 +45,6 @@ public class UserLoginController {
             resp.put("msg", "非法请求");
             return resp;
         }
-        return userLoginService.getTokenValidResult(data.get("token"));
+        return userService.getTokenValidResult(data.get("token"));
     }
 }

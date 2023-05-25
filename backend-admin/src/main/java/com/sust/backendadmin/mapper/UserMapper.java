@@ -5,5 +5,5 @@ import com.sust.backendadmin.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface UserLoginMapper extends BaseMapper<User> {
+public interface UserMapper extends BaseMapper<User> {
 }
