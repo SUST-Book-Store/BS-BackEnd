@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/user")
 public class UserLoginController {
     @Autowired
     private UserLoginService userLoginService;
@@ -34,5 +35,16 @@ public class UserLoginController {
             return resp;
         }
         return userLoginService.getUserRegisterResult(data.get("phone"), data.get("username"), data.get("password"), data.get("sex"));
+    }
+
+    @PostMapping("/validatetoken")
+    public JSONObject validateToken(@RequestBody Map<String, String> data) {
+        JSONObject resp = new JSONObject();
+        if (StrUtil.isBlank(data.get("token"))) {
+            resp.put("code", -100);
+            resp.put("msg", "非法请求");
+            return resp;
+        }
+        return userLoginService.getTokenValidResult(data.get("token"));
     }
 }

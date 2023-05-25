@@ -64,4 +64,18 @@ public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> im
         }
         return resp;
     }
+    @Override
+    public JSONObject getTokenValidResult(String token) {
+        boolean isValid = UserTokenUtil.ValidateUserToken(token);
+        JSONObject resp = new JSONObject();
+        if (isValid) {
+            resp.put("code", 200);
+            resp.put("isvalid", true);
+
+        } else {
+            resp.put("code", 401);
+            resp.put("isvalid", false);
+        }
+        return resp;
+    }
 }

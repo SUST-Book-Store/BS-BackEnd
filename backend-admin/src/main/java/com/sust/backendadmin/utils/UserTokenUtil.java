@@ -42,7 +42,7 @@ public class UserTokenUtil {
             if (expiration >= System.currentTimeMillis()) {
                 isValid = true;
             }
-        } catch (ExpiredJwtException e) {
+        } catch (Exception e) {
             System.out.println("Expired Session Token");
         }
         return isValid;
