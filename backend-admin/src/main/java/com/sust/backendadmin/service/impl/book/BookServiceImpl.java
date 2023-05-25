@@ -58,9 +58,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         {
             wrapper.eq(Book::getAvailable,searchBooksDto.getStatus());
         }
-        if (CollectionUtils.isNotEmpty(searchBooksDto.getData()))
+        if (CollectionUtils.isNotEmpty(searchBooksDto.getDates()))
         {
-            wrapper.between(Book::getPublisher,searchBooksDto.getData().get(0),searchBooksDto.getData().get(1));
+            wrapper.between(Book::getPublisher,searchBooksDto.getDates().get(0),searchBooksDto.getDates().get(1));
         }
         Page<Book> page = new Page<>( searchBooksDto.getPageNum(),searchBooksDto.getPageSize() );
         page = this.page(page, wrapper);

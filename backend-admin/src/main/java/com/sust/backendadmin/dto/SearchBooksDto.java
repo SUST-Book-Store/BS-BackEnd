@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -15,7 +16,7 @@ public class SearchBooksDto implements Serializable {
     private int pageSize;
     private int pageNum;
     private String name;
-    private List<Data> data;
+    private List<Date> dates;
     private String author;
     private int status=-1;
     private String type;
