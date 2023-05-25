@@ -3,9 +3,9 @@ package com.sust.backendadmin.service.impl.user;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sust.backendadmin.mapper.UserLoginMapper;
+import com.sust.backendadmin.mapper.UserMapper;
 import com.sust.backendadmin.pojo.User;
-import com.sust.backendadmin.service.user.UserLoginService;
+import com.sust.backendadmin.service.user.UserService;
 import com.sust.backendadmin.utils.GetEncryptedStrUtil;
 import com.sust.backendadmin.utils.UserTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +14,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> implements UserLoginService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
-    private UserLoginMapper userLoginMapper;
+    private UserMapper userMapper;
 
     @Override
     public JSONObject getUserLoginResult(String phone, String password) {
         QueryWrapper<User> loginQueryWrapper =new QueryWrapper<>();
         loginQueryWrapper.eq("phone", phone).eq("password", GetEncryptedStrUtil.MD5(password));
-        List<User> userList = userLoginMapper.selectList(loginQueryWrapper);
+        List<User> userList = userMapper.selectList(loginQueryWrapper);
 
         JSONObject resp = new JSONObject();
         if (!userList.isEmpty()) {
@@ -40,7 +40,7 @@ public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> im
     public JSONObject getUserRegisterResult(String phone, String username, String password, String sex) {
         QueryWrapper<User> loginQueryWrapper =new QueryWrapper<>();
         loginQueryWrapper.eq("phone", phone);
-        List<User> userList = userLoginMapper.selectList(loginQueryWrapper);
+        List<User> userList = userMapper.selectList(loginQueryWrapper);
         JSONObject resp = new JSONObject();
         if (!userList.isEmpty()) {
             resp.put("status", -100);
@@ -53,7 +53,7 @@ public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> im
             newUser.setSex(sex);
             newUser.setRole(0);
             // 执行插入操作，将用户注册信息插入到数据库中
-            int insertResult = userLoginMapper.insert(newUser);
+            int insertResult = userMapper.insert(newUser);
             if (insertResult > 0) {
                 resp.put("status", 0);
                 resp.put("msg", "注册成功");
