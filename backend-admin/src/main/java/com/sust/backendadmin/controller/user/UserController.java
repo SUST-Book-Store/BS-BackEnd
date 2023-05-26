@@ -55,11 +55,6 @@ public class UserController {
     public JSONObject getUserInfo(HttpServletRequest request) {
         String userToken = request.getHeader("token");
         JSONObject resp = new JSONObject();
-        if (userToken == null || StrUtil.isBlank(userToken)) {
-            resp.put("code", -100);
-            resp.put("msg", "非法请求");
-            return resp;
-        }
         int user_id = UserTokenUtil.GetUserIdByToken(userToken);
         if (user_id == -1) {
             resp.put("code", 401);
@@ -67,5 +62,29 @@ public class UserController {
             return resp;
         }
         return userService.getUserDataById(user_id);
+    }
+    @PostMapping("/changeUserPassword")
+    public JSONObject changeUserPassword(HttpServletRequest request, @RequestBody Map<String, String> data) {
+        String userToken = request.getHeader("token");
+        JSONObject resp = new JSONObject();
+        int user_id = UserTokenUtil.GetUserIdByToken(userToken);
+        if (user_id == -1) {
+            resp.put("code", 401);
+            resp.put("msg", "Token无效");
+            return resp;
+        }
+        return userService.changeUserPassword(user_id, data.get("origpass"), data.get("password"));
+    }
+    @PostMapping("/changeUserInfo")
+    public JSONObject changeUserInfo(HttpServletRequest request, @RequestBody Map<String, String> data) {
+        String userToken = request.getHeader("token");
+        JSONObject resp = new JSONObject();
+        int user_id = UserTokenUtil.GetUserIdByToken(userToken);
+        if (user_id == -1) {
+            resp.put("code", 401);
+            resp.put("msg", "Token无效");
+            return resp;
+        }
+        return userService.changeUserInfo(user_id, data.get("phone"), data.get("username"), data.get("sex"));
     }
 }

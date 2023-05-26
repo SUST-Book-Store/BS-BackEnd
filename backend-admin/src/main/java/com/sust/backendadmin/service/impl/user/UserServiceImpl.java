@@ -66,6 +66,55 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public JSONObject changeUserPassword(int user_id, String orig_password, String new_password) {
+        JSONObject resp = new JSONObject();
+        QueryWrapper<User> updateWrapper = new QueryWrapper<>();
+        updateWrapper.eq("user_id", user_id);
+        String oldPass = userMapper.selectList(updateWrapper).get(0).getPassword();
+        if (!oldPass.equals(GetEncryptedStrUtil.MD5(orig_password))){
+            resp.put("code", -100);
+            resp.put("msg", "原密码输入错误");
+        } else {
+            User updatedUser = new User();
+            updatedUser.setPassword(GetEncryptedStrUtil.MD5(new_password));
+            int updateResult = userMapper.update(updatedUser, updateWrapper);
+            if (updateResult > 0) {
+                // 更新成功
+                resp.put("code", 0);
+                resp.put("msg", "密码修改成功");
+            } else {
+                // 更新失败
+                resp.put("code", -300);
+                resp.put("msg", "密码修改失败");
+            }
+        }
+        return resp;
+
+    }
+
+    @Override
+    public JSONObject changeUserInfo(int user_id, String phone, String username, String sex) {
+        JSONObject resp = new JSONObject();
+        QueryWrapper<User> updateWrapper = new QueryWrapper<>();
+        updateWrapper.eq("user_id", user_id);
+        User updatedUser = new User();
+        updatedUser.setPhone(phone);
+        updatedUser.setUsername(username);
+        updatedUser.setSex(sex);
+        int updateResult = userMapper.update(updatedUser, updateWrapper);
+        if (updateResult > 0) {
+            // 更新成功
+            resp.put("code", 0);
+            resp.put("msg", "修改成功");
+        } else {
+            // 更新失败
+            resp.put("code", -300);
+            resp.put("msg", "修改失败");
+        }
+        return resp;
+    }
+
+    @Override
     public JSONObject getUserDataById(int user_id) {
         QueryWrapper<User> loginQueryWrapper =new QueryWrapper<>();
         loginQueryWrapper.eq("user_id", user_id);
@@ -80,6 +129,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             JSONObject data = new JSONObject();
             data.put("user_id", user_id);
             data.put("username", user.getUsername());
+            data.put("phone", user.getPhone());
+            data.put("sex", user.getSex());
             if (user.getRole().intValue() == 1) {
                 data.put("is_admin", true);
             } else {
