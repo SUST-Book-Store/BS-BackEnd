@@ -41,17 +41,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private OrderBooksMapper orderBooksMapper;
 
     @Override
-    public Result getPage(Integer pageNum, Integer pageSize) {
+    public Result getPage(Integer pageNum, Integer pageSize, Integer userId) {
         IPage<Order> orderIPage = new Page<>(pageNum, pageSize);
         QueryWrapper<Order> bookQueryWrapper =new QueryWrapper<>();
-        bookQueryWrapper.orderByDesc("order_id");
+        bookQueryWrapper.orderByDesc("order_id").eq("user_id", userId);
         List<Order> orders = orderMapper.selectPage(orderIPage, bookQueryWrapper).getRecords();
-        return Result.ok(orders, orderMapper.selectCount(null));
+        return Result.ok(orders, orderMapper.selectCount(new QueryWrapper<Order>().eq("user_id", userId)));
     }
 
     @Transactional
     @Override
-    public Result add(OrderDto orderDto) {
+    public Result add(OrderDto orderDto, Integer userId) {
         List<Cart> carts = orderDto.getCarts();
         //扣减库存
         for(Cart cart : carts) {
@@ -65,7 +65,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             }
         }
         Order order = new Order();
-        Integer userId = 1;
         order.setUserId(userId);
         order.setNo(orderIdCreate.nextId());
         order.setStatus(0);
@@ -88,7 +87,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Transactional
     @Override
-    public Result addOrder(DetailOrderDto detailOrderDto) {
+    public Result addOrder(DetailOrderDto detailOrderDto, Integer userId) {
         int bookId = detailOrderDto.getBookId();
         int amount = detailOrderDto.getAmount();
         //判断库存
@@ -98,7 +97,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return Result.fail("库存不足");
         }
         Order order = new Order();
-        int userId = 1;
         order.setUserId(userId);
         order.setNo(orderIdCreate.nextId());
         order.setStatus(0);

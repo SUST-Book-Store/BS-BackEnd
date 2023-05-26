@@ -9,5 +9,5 @@ import com.sust.backendadmin.pojo.Result;
 import java.util.List;
 
 public interface CartService extends IService<Cart> {
-    Result getPage(Integer pageNum, Integer pageSize, String name);
+    Result getPage(Integer pageNum, Integer pageSize, String name, Integer userId);
 }

@@ -1,5 +1,6 @@
 package com.sust.backendadmin.service.impl.cart;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sust.backendadmin.mapper.CartMapper;
 import com.sust.backendadmin.service.cart.CartService;
@@ -14,7 +15,10 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements Ca
     private CartMapper cartMapper;
 
     @Override
-    public Result getPage(Integer pageNum, Integer pageSize, String name) {
-        return Result.ok(cartMapper.unionPage(name, 1, pageNum, pageSize), cartMapper.selectCount(null));
+    public Result getPage(Integer pageNum, Integer pageSize, String name, Integer userId) {
+        QueryWrapper<Cart> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        Integer pageBegin = (pageNum - 1) * pageSize;
+        return Result.ok(cartMapper.unionPage(name, userId, pageBegin, pageSize), cartMapper.selectCount(queryWrapper));
     }
 }
