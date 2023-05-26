@@ -7,6 +7,7 @@ import com.sust.backendadmin.service.book.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -16,18 +17,28 @@ public class AdminController {
     @PostMapping("/lists")
     public Result lists(@RequestBody SearchBooksDto searchBooksDto)
     {
-        SearchBooksDto booksDto = new SearchBooksDto();
+
         return bookService.lists(searchBooksDto);
+    }
+    @PostMapping("/books/delete")
+    public Result delete(@RequestBody List<Integer> ids)
+    {
+        return bookService.delete(ids);
     }
     @PostMapping("/add")
     public Result add(@RequestBody Book book)
     {
         return bookService.add(book);
     }
-//    //
-//    @PostMapping("/up")
-//    public Result upOrDown(@RequestBody )
-//    {
-//        return bookService.up();
-//    }
+    //
+    @PostMapping("/books/up")
+    public Result up(@RequestBody List<Integer> ids)
+    {
+        return bookService.up(ids);
+    }
+    @PostMapping("/books/down")
+    public Result down(@RequestBody List<Integer> ids)
+    {
+        return bookService.down(ids);
+    }
 }

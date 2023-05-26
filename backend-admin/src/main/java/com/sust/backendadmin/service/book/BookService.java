@@ -15,4 +15,10 @@ public interface BookService extends IService<Book> {
     Result lists(SearchBooksDto searchBooksDto);
 
     Result add(Book book);
+
+    Result delete(List<Integer> ids);
+
+    Result up(List<Integer> ids);
+
+    Result down(List<Integer> ids);
 }

@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sust.backendadmin.dto.PageListDto;
@@ -18,8 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements BookService {
@@ -76,6 +79,56 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     public Result add(Book book) {
 
         return null;
+    }
+
+    @Override
+    public Result delete(List<Integer> ids) {
+        if (CollectionUtils.isEmpty(ids))
+            return Result.fail("未选择");
+        List<Book> bookList = this.list(Wrappers.<Book>lambdaQuery().in(Book::getBookId, ids));
+        if (bookList.size()!=ids.size())
+            return Result.fail("存在图书不存在");
+        boolean b = bookList.stream().anyMatch(book -> book.getAvailable() == 1);
+        if (b)
+            return Result.fail("选择图书中存在上架图书");
+        boolean c = this.removeBatchByIds(ids);
+        if (c)
+        {
+            return Result.ok();
+        }else
+            return Result.fail("操作失败");
+
+    }
+
+    @Override
+    public Result up(List<Integer> ids) {
+        List<Book> bookList = this.list(Wrappers.<Book>lambdaQuery().in(Book::getBookId, ids));
+        if (bookList.size()!=ids.size())
+            return Result.fail("存在图书不存在");
+        boolean b = bookList.stream().anyMatch(book -> book.getAvailable() == 1);
+        if(b)
+            return Result.fail("存在书籍已经上架，不可重复上架");
+        List<Book> newBooks = bookList.stream()
+                .peek(book -> book.setAvailable(1))
+                .collect(Collectors.toList());
+        this.saveBatch(newBooks);
+        return Result.ok();
+    }
+
+    @Override
+    public Result down(List<Integer> ids) {
+        List<Book> bookList = this.list(Wrappers.<Book>lambdaQuery().in(Book::getBookId, ids));
+        if (bookList.size()!=ids.size())
+            return Result.fail("存在图书不存在");
+        boolean b = bookList.stream().anyMatch(book -> book.getAvailable() == 0);
+        if(b)
+            return Result.fail("存在书籍已经下架，不可重复上架");
+        List<Book> newBooks = bookList.stream()
+                .peek(book -> book.setAvailable(0))
+                .collect(Collectors.toList());
+        this.saveBatch(newBooks);
+        return Result.ok();
+
     }
 
 }
