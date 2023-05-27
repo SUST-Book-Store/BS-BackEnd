@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 @RestController
@@ -27,98 +28,198 @@ public class AdminController {
     @Autowired
     private OrderService orderService;
     @PostMapping("/lists")
-    public Result lists(@RequestBody SearchBooksDto searchBooksDto)
+    public Result lists(@RequestBody SearchBooksDto searchBooksDto, HttpServletRequest request)
     {
-
-        return bookService.lists(searchBooksDto);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return bookService.lists(searchBooksDto);
+        } else {
+            return Result.fail("你没有权限");
+        }
     }
     @PostMapping("/userList")
-    public Result userList(@RequestBody SearchUserDto userDto )
+    public Result userList(@RequestBody SearchUserDto userDto, HttpServletRequest request)
     {
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return userService.lists(userDto);
+        } else {
+            return Result.fail("你没有权限");
+        }
 
-
-        return  userService.lists(userDto);
     }
     @PostMapping("/books/delete")
-    public Result delete(@RequestBody List<Integer> ids)
+    public Result delete(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
-        return bookService.delete(ids);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return bookService.delete(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     @PostMapping("/add")
-    public Result add(@RequestBody Book book)
+    public Result add(@RequestBody Book book, HttpServletRequest request)
     {
-        return bookService.add(book);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return bookService.add(book);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     //
     @PostMapping("/books/up")
-    public Result up(@RequestBody List<Integer> ids)
+    public Result up(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
-        return bookService.up(ids);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return bookService.up(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     @PostMapping("/books/down")
-    public Result down(@RequestBody List<Integer> ids)
+    public Result down(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
-        return bookService.down(ids);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return bookService.down(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     @PostMapping("/books/savebook")
-    public Result saveBook(@RequestBody Book book)
+    public Result saveBook(@RequestBody Book book, HttpServletRequest request)
     {
-        return bookService.saveBook(book);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return bookService.saveBook(book);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     @PostMapping("/getBooks")
-    public Result down(@RequestParam("id") int bookid)
+    public Result down(@RequestParam("id") int bookid, HttpServletRequest request)
     {
-        Book book = bookService.getById(bookid);
-        String detail = book.getDetail();
-        List<String> detailList = Arrays.asList(detail.split(";"));
-        BookDto bookDto = new BookDto();
-        BeanUtils.copyProperties(book,bookDto);
-        bookDto.setDetail(detailList);
-        return Result.ok(bookDto);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            Book book = bookService.getById(bookid);
+            String detail = book.getDetail();
+            List<String> detailList = Arrays.asList(detail.split(";"));
+            BookDto bookDto = new BookDto();
+            BeanUtils.copyProperties(book,bookDto);
+            bookDto.setDetail(detailList);
+            return Result.ok(bookDto);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     @PostMapping("/books/img")
-    public Result uploadImg(@RequestParam(value = "file",required = false) MultipartFile file)
-    { return  bookService.upload(file); }
-    @PostMapping("/books/save")
-    public Result down(@RequestBody BookDto book)
+    public Result uploadImg(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request)
     {
-        String detailString = StringUtils.collectionToDelimitedString(book.getDetail(), ";");
-        Book book1 = new Book();
-        BeanUtils.copyProperties(book,book1);
-        book1.setDetail(detailString);
-        boolean b = bookService.updateById(book1);
-        if (b)
-        {
-            return Result.ok();
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return bookService.upload(file);
+        } else {
+            return Result.fail("你没有权限");
         }
-        return Result.fail("编辑失败");
+    }
+    @PostMapping("/books/save")
+    public Result down(@RequestBody BookDto book, HttpServletRequest request)
+    {
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            String detailString = StringUtils.collectionToDelimitedString(book.getDetail(), ";");
+            Book book1 = new Book();
+            BeanUtils.copyProperties(book,book1);
+            book1.setDetail(detailString);
+            boolean b = bookService.updateById(book1);
+            if (b)
+            {
+                return Result.ok();
+            }
+            return Result.fail("编辑失败");
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     @PostMapping("/user/delete")
-    public Result deleteUser(@RequestBody List<Integer> ids)
+    public Result deleteUser(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
-        return userService.deleteUser(ids);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return userService.deleteUser(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     //提高用户权限
     @PostMapping("/user/up")
-    public Result userUp(@RequestBody List<Integer> ids)
+    public Result userUp(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return userService.up(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
 
-        return userService.up(ids);
     }
     @PostMapping("/user/down")
-    public Result userDown(@RequestBody List<Integer> ids)
+    public Result userDown(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return userService.down(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
 
-        return userService.down(ids);
     }
     @PostMapping("/listOrder")
-    public Result listOrder(@RequestBody SearchOrderDto searchOrderDto)
+    public Result listOrder(@RequestBody SearchOrderDto searchOrderDto, HttpServletRequest request)
     {
-        return orderService.listOrder(searchOrderDto);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return orderService.listOrder(searchOrderDto);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
     @PostMapping("/orders/send")
-    public Result deleteOrder(@RequestBody List<Integer> ids)
+    public Result deleteOrder(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
-        return orderService.send(ids);
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return orderService.send(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
     }
 }

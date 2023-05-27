@@ -127,6 +127,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    public boolean checkIfisAdminByToken(String token) {
+        int user_id = UserTokenUtil.GetUserIdByToken(token);
+        if (user_id == -1) {
+            return false;
+        }
+        QueryWrapper<User> queryWrapper =new QueryWrapper<>();
+        queryWrapper.eq("user_id", user_id);
+        List<User> users = userMapper.selectList(queryWrapper);
+        System.out.println(users);
+        System.out.println(users.get(0));
+        System.out.println(users.get(0).getRole());
+        boolean isAdmin = users.get(0).getRole().equals(1);
+        if (isAdmin) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public JSONObject getUserDataById(int user_id) {
         QueryWrapper<User> loginQueryWrapper =new QueryWrapper<>();
         loginQueryWrapper.eq("user_id", user_id);
