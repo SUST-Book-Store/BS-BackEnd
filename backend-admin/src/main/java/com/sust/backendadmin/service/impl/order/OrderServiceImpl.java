@@ -1,12 +1,14 @@
 package com.sust.backendadmin.service.impl.order;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sust.backendadmin.dto.DetailOrderDto;
-import com.sust.backendadmin.dto.OrderDto;
-import com.sust.backendadmin.dto.OrderInfoDto;
+import com.sust.backendadmin.dto.*;
 import com.sust.backendadmin.mapper.CartMapper;
 import com.sust.backendadmin.mapper.OrderBooksMapper;
 import com.sust.backendadmin.mapper.OrderMapper;
@@ -22,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements OrderService {
@@ -130,5 +133,56 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             res.add(orderInfoDto);
         }
         return Result.ok(res);
+    }
+
+    @Override
+    public Result listOrder(SearchOrderDto searchOrderDto) {
+
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(searchOrderDto.getNo()))
+        {
+            String no = searchOrderDto.getNo();
+            Long longid = Long.valueOf(no);
+            wrapper.like(Order::getNo,longid);
+        }
+        if (searchOrderDto.getStatus()!=-1)
+        {
+            wrapper.eq(Order::getStatus,searchOrderDto.getStatus());
+        }
+        Page<Order> page = new Page<>( searchOrderDto.getPageNum(),searchOrderDto.getPageSize() );
+        page = this.page(page, wrapper);
+        PageListDto pageListDto = new PageListDto();
+        pageListDto.setOrderList(page.getRecords());
+        pageListDto.setPages((int) page.getPages());
+        pageListDto.setTotal((int) page.getTotal());
+        return Result.ok(pageListDto);
+    }
+
+    @Override
+    public Result send(List<Integer> ids) {
+        if (CollectionUtils.isEmpty(ids))
+            return Result.fail("未选择");
+        List<Order> orderList = this.list(Wrappers.<Order>lambdaQuery().in(Order::getOrderId, ids));
+        if (orderList.size()!=ids.size())
+            return Result.fail("存在订单缺失");
+        boolean b = orderList.stream().anyMatch(order -> order.getStatus() == 0);
+        if (b)
+        return Result.fail("存在订单未付款");
+        boolean c = orderList.stream().anyMatch(order -> order.getStatus() == 2);
+        if (c)
+            return Result.fail("存在订单已经取消");
+        boolean d = orderList.stream().anyMatch(order -> order.getStatus() == 3);
+        if (d)
+            return Result.fail("存在订单已经发货");
+        List<Order> newOrders = orderList.stream()
+                .peek(book -> book.setStatus(3))
+                .collect(Collectors.toList());
+        boolean h = this.updateBatchById(newOrders);
+        if (h)
+        {
+            return Result.ok();
+        }else
+            return Result.fail("操作失败");
+
     }
 }

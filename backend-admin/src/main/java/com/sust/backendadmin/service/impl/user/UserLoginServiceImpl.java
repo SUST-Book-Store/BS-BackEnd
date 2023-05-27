@@ -1,10 +1,21 @@
 package com.sust.backendadmin.service.impl.user;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sust.backendadmin.dto.PageListDto;
+import com.sust.backendadmin.dto.SearchUserDto;
 import com.sust.backendadmin.mapper.UserLoginMapper;
+import com.sust.backendadmin.pojo.Book;
+import com.sust.backendadmin.pojo.Order;
+import com.sust.backendadmin.pojo.Result;
 import com.sust.backendadmin.pojo.User;
+import com.sust.backendadmin.service.order.OrderService;
 import com.sust.backendadmin.service.user.UserLoginService;
 import com.sust.backendadmin.utils.GetEncryptedStrUtil;
 import com.sust.backendadmin.utils.UserTokenUtil;
@@ -12,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> implements UserLoginService {
@@ -66,5 +78,74 @@ public class UserLoginServiceImpl  extends ServiceImpl<UserLoginMapper, User> im
         }
 
         return resp;
+    }
+
+    @Override
+    public Result lists(SearchUserDto userDto) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        if (StringUtils.isNotBlank(userDto.getUsername()))
+        {
+            wrapper.like(User::getUsername,userDto.getUsername());
+        }
+        if (StringUtils.isNotBlank(userDto.getSex()))
+        {
+            wrapper.eq(User::getSex,userDto.getSex());
+        }
+        if (userDto.getRole()!=-1)
+        {
+            wrapper.eq(User::getRole,userDto.getRole());
+        }
+        Page<User> page = new Page<>( userDto.getPageNum(),userDto.getPageSize() );
+        page = this.page(page, wrapper);
+        PageListDto pageListDto = new PageListDto();
+        pageListDto.setUserList(page.getRecords());
+        pageListDto.setPages((int) page.getPages());
+        pageListDto.setTotal((int) page.getTotal());
+        return Result.ok(pageListDto);
+    }
+    @Autowired
+    private OrderService orderService;
+    @Override
+    public Result deleteUser(List<Integer> ids) {
+        List<Order> list = orderService.list(Wrappers.<Order>lambdaQuery().in(Order::getUserId, ids));
+        if (list.size()!=0)
+            return Result.fail("选择用户有订单信息，不能删除");
+        if (CollectionUtils.isEmpty(ids))
+            return Result.fail("未选择");
+        boolean c = this.removeBatchByIds(ids);
+        if (c)
+        {
+            return Result.ok();
+        }else
+            return Result.fail("操作失败");
+    }
+
+    @Override
+    public Result up(List<Integer> ids) {
+        List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
+        List<User> newUsers = userkList.stream()
+                .peek(user -> user.setRole(1))
+                .collect(Collectors.toList());
+        boolean b = this.updateBatchById(newUsers);
+        if (b)
+        return Result.ok();
+        return Result.fail("操作失败");
+    }
+
+    @Override
+    public Result down(List<Integer> ids) {
+        List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
+
+        boolean b = userkList.stream().anyMatch(user -> user.getRole() == 1);
+        if (b)
+            return Result.fail("不可以操作其他管理员");
+        List<User> newUsers = userkList.stream()
+                .peek(user -> user.setRole(0))
+                .collect(Collectors.toList());
+        boolean c = this.updateBatchById(newUsers);
+        if (c)
+            return Result.ok();
+        return Result.fail("操作失败");
+
     }
 }

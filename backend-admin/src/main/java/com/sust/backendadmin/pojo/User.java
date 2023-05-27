@@ -18,4 +18,5 @@ public class User {
     private String sex;
     private String password;
     private Integer role;
+    private String phone;
 }

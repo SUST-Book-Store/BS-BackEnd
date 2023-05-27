@@ -15,12 +15,16 @@ import com.sust.backendadmin.mapper.BookMapper;
 import com.sust.backendadmin.pojo.Result;
 import com.sust.backendadmin.service.book.BookService;
 import com.sust.backendadmin.pojo.Book;
+import com.sust.backendadmin.utils.OSSUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +33,8 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Autowired
     private BookMapper bookMapper;
-
+    @Autowired
+    private OSSUtils ossUtils;
     @Override
     public JSONObject getPage(Integer pageNum, Integer pageSize) {
         IPage<Book> bookIPage = new Page<>(pageNum, pageSize);
@@ -111,7 +116,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         List<Book> newBooks = bookList.stream()
                 .peek(book -> book.setAvailable(1))
                 .collect(Collectors.toList());
-        this.saveBatch(newBooks);
+        this.updateBatchById(newBooks);
         return Result.ok();
     }
 
@@ -126,9 +131,28 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         List<Book> newBooks = bookList.stream()
                 .peek(book -> book.setAvailable(0))
                 .collect(Collectors.toList());
-        this.saveBatch(newBooks);
+        this.updateBatchById(newBooks);
         return Result.ok();
 
+    }
+
+    @Override
+    public Result upload(MultipartFile file) {
+        String s = null;
+        try { s = ossUtils.upload(file); }
+        catch (IOException e) { e.printStackTrace(); }
+        return Result.ok(s);
+    }
+
+    @Override
+    public Result saveBook(Book book) {
+        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor()))
+            return Result.fail("请补全信息");
+        book.setCreateTime(new Date());
+        boolean save = this.save(book);
+        if (save)
+            return Result.ok();
+        return Result.fail("请补全信息");
     }
 
 }
