@@ -1,7 +1,11 @@
 package com.sust.backendadmin.service.user;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sust.backendadmin.dto.SearchUserDto;
+import com.sust.backendadmin.pojo.Result;
 import com.sust.backendadmin.pojo.User;
+
+import java.util.List;
 
 
 public interface UserService extends IService<User> {
@@ -11,4 +15,12 @@ public interface UserService extends IService<User> {
     JSONObject getUserDataById(int user_id);
     JSONObject changeUserPassword(int user_id, String orig_password, String new_password);
     JSONObject changeUserInfo(int user_id, String phone, String username, String sex);
+
+    Result lists(SearchUserDto userDto);
+
+    Result deleteUser(List<Integer> ids);
+
+    Result up(List<Integer> ids);
+
+    Result down(List<Integer> ids);
 }
