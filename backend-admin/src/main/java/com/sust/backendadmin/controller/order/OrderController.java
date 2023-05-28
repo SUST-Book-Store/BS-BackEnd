@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.Map;
 
 
@@ -37,7 +38,7 @@ public class OrderController {
         if (id == null) {
             return Result.fail("非法请求");
         }
-        boolean success = orderService.update().eq("order_id", id).set("status", 1).update();
+        boolean success = orderService.update().eq("order_id", id).set("status", 1).set("pay_time",new Date()).update();
         if (!success) {
             return Result.fail("付款失败，请稍后再试");
         }
