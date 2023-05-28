@@ -32,6 +32,18 @@ public class OrderController {
         return Result.ok();
     }
 
+    @GetMapping("/pay/{id}")
+    public Result payOrder(@PathVariable Integer id) {
+        if (id == null) {
+            return Result.fail("非法请求");
+        }
+        boolean success = orderService.update().eq("order_id", id).set("status", 1).update();
+        if (!success) {
+            return Result.fail("付款失败，请稍后再试");
+        }
+        return Result.ok();
+    }
+
     @GetMapping("/get/{id}")
     public Result getOrderInfoById(@PathVariable Integer id) {
         if (id == null) {

@@ -34,7 +34,7 @@ public class BookController {
             SearchBooksDto searchBooksDto = new SearchBooksDto();
             searchBooksDto.setName("%"+data.get("keyword")+"%");
             searchBooksDto.setPageNum(page);
-            searchBooksDto.setPageSize(10);
+            searchBooksDto.setPageSize(12);
             return bookService.lists(searchBooksDto);
         }
     }
