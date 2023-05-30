@@ -70,6 +70,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         {
             wrapper.between(Book::getPublisher,searchBooksDto.getDates().get(0),searchBooksDto.getDates().get(1));
         }
+        wrapper.orderByDesc(Book::getCreateTime);
         Page<Book> page = new Page<>( searchBooksDto.getPageNum(),searchBooksDto.getPageSize() );
         page = this.page(page, wrapper);
         PageListDto pageListDto = new PageListDto();
