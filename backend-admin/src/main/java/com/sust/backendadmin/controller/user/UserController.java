@@ -85,6 +85,6 @@ public class UserController {
             resp.put("msg", "Token无效");
             return resp;
         }
-        return userService.changeUserInfo(user_id, data.get("phone"), data.get("username"), data.get("sex"));
+        return userService.changeUserInfo(user_id, data.get("phone"), data.get("username"), data.get("sex"), data.get("address"));
     }
 }

@@ -105,7 +105,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public JSONObject changeUserInfo(int user_id, String phone, String username, String sex) {
+    public JSONObject changeUserInfo(int user_id, String phone, String username, String sex, String address) {
         JSONObject resp = new JSONObject();
         QueryWrapper<User> updateWrapper = new QueryWrapper<>();
         updateWrapper.eq("user_id", user_id);
@@ -113,6 +113,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         updatedUser.setPhone(phone);
         updatedUser.setUsername(username);
         updatedUser.setSex(sex);
+        updatedUser.setAddress(address);
         int updateResult = userMapper.update(updatedUser, updateWrapper);
         if (updateResult > 0) {
             // 更新成功
@@ -163,6 +164,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             data.put("username", user.getUsername());
             data.put("phone", user.getPhone());
             data.put("sex", user.getSex());
+            data.put("address", user.getAddress());
             if (user.getRole().intValue() == 1) {
                 data.put("is_admin", true);
             } else {

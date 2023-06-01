@@ -27,4 +27,5 @@ public class Order {
     private Date time;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date payTime;
+    private String address;
 }

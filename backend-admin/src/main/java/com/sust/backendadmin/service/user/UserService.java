@@ -14,7 +14,7 @@ public interface UserService extends IService<User> {
     JSONObject getTokenValidResult(String token);
     JSONObject getUserDataById(int user_id);
     JSONObject changeUserPassword(int user_id, String orig_password, String new_password);
-    JSONObject changeUserInfo(int user_id, String phone, String username, String sex);
+    JSONObject changeUserInfo(int user_id, String phone, String username, String sex, String address);
     boolean checkIfisAdminByToken(String token);
 
     Result lists(SearchUserDto userDto);

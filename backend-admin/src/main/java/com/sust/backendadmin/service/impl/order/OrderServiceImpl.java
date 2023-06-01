@@ -1,5 +1,6 @@
 package com.sust.backendadmin.service.impl.order;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -12,9 +13,11 @@ import com.sust.backendadmin.dto.*;
 import com.sust.backendadmin.mapper.CartMapper;
 import com.sust.backendadmin.mapper.OrderBooksMapper;
 import com.sust.backendadmin.mapper.OrderMapper;
+import com.sust.backendadmin.mapper.UserMapper;
 import com.sust.backendadmin.service.order.OrderService;
 import com.sust.backendadmin.pojo.*;
 import com.sust.backendadmin.service.book.BookService;
+import com.sust.backendadmin.service.user.UserService;
 import com.sust.backendadmin.utils.OrderIdCreate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,12 +27,16 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements OrderService {
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Autowired
     private CartMapper cartMapper;
@@ -67,11 +74,26 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 return Result.fail(book.getName()+ "库存不足");
             }
         }
+        QueryWrapper<User> addrQueryWrapper =new QueryWrapper<>();
+        addrQueryWrapper.eq("user_id", userId.intValue());
+        List<User> userList = userMapper.selectList(addrQueryWrapper);
+        String address = "";
+        if (userList.isEmpty()) {
+            return Result.fail("该用户不存在");
+        } else {
+            User user = userList.get(0);
+            address = user.getAddress();
+        }
+        if (address == null || address.toString() == "") {
+            return Result.fail("invalidaddr");
+        }
         Order order = new Order();
+        order.setAddress(address.toString());
         order.setUserId(userId);
         order.setNo(orderIdCreate.nextId());
         order.setStatus(0);
         order.setTotalPrice(orderDto.getTotalPrice());
+
         Date now = new Date();
         order.setTime(now);
         //创建订单
@@ -99,11 +121,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         if (!success) {
             return Result.fail("库存不足");
         }
+        QueryWrapper<User> addrQueryWrapper =new QueryWrapper<>();
+        addrQueryWrapper.eq("user_id", userId.intValue());
+        List<User> userList = userMapper.selectList(addrQueryWrapper);
+        String address = "";
+        if (userList.isEmpty()) {
+            return Result.fail("该用户不存在");
+        } else {
+            User user = userList.get(0);
+            address = user.getAddress();
+        }
+        if (address == null || address.toString() == "") {
+            return Result.fail("invalidaddr");
+        }
         Order order = new Order();
         order.setUserId(userId);
         order.setNo(orderIdCreate.nextId());
         order.setStatus(0);
-
+        order.setAddress(address.toString());
         order.setTotalPrice(detailOrderDto.getPrice().multiply(BigDecimal.valueOf(amount)));
         Date time = new Date();
         order.setTime(time);
