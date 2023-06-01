@@ -64,7 +64,7 @@ public class AdminController {
 
     }
 
-    //
+    //上架书籍
     @PostMapping("/books/up")
     public Result up(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -76,7 +76,7 @@ public class AdminController {
         }
 
     }
-
+    //下架书籍
     @PostMapping("/books/down")
     public Result down(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -88,7 +88,7 @@ public class AdminController {
         }
 
     }
-
+    //保存添加书籍
     @PostMapping("/books/savebook")
     public Result saveBook(@RequestBody BookDto book, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -100,7 +100,7 @@ public class AdminController {
         }
 
     }
-
+    //更具id获得书籍
     @PostMapping("/getBooks")
     public Result down(@RequestParam("id") int bookid, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -119,17 +119,7 @@ public class AdminController {
 
     }
 
-    //    @PostMapping("/books/img")
-//    public Result uploadImg(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request)
-//    {
-//        String userToken = request.getHeader("token");
-//        boolean is_admin = userService.checkIfisAdminByToken(userToken);
-//        if (is_admin) {
-//            return bookService.upload(file);
-//        } else {
-//            return Result.fail("你没有权限");
-//        }
-//    }
+
     @PostMapping("/books/img")
     public Result uploadImg(@RequestParam(value = "file", required = false) MultipartFile file) {
         return bookService.upload(file);
