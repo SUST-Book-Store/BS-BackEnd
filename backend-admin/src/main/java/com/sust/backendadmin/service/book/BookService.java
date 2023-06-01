@@ -26,7 +26,7 @@ public interface BookService extends IService<Book> {
 
     Result upload(MultipartFile file);
 
-    Result saveBook(Book book);
+    Result saveBook(BookDto book);
 
     Result updateByBookId(BookDto book);
 }

@@ -144,11 +144,15 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     }
 
     @Override
-    public Result saveBook(Book book) {
+    public Result saveBook(BookDto book) {
         if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor()))
             return Result.fail("请补全信息");
+        String detailString = org.springframework.util.StringUtils.collectionToDelimitedString(book.getDetail(), ";");
+        Book book1 = new Book();
+        BeanUtils.copyProperties(book,book1);
+        book1.setDetail(detailString);
         book.setCreateTime(new Date());
-        boolean save = this.save(book);
+        boolean save = this.save(book1);
         if (save)
             return Result.ok();
         return Result.fail("请补全信息");

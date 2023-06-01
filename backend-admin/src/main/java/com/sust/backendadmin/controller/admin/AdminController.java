@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
+
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
@@ -27,9 +28,9 @@ public class AdminController {
     private UserService userService;
     @Autowired
     private OrderService orderService;
+
     @PostMapping("/lists")
-    public Result lists(@RequestBody SearchBooksDto searchBooksDto, HttpServletRequest request)
-    {
+    public Result lists(@RequestBody SearchBooksDto searchBooksDto, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -38,9 +39,9 @@ public class AdminController {
             return Result.fail("你没有权限");
         }
     }
+
     @PostMapping("/userList")
-    public Result userList(@RequestBody SearchUserDto userDto, HttpServletRequest request)
-    {
+    public Result userList(@RequestBody SearchUserDto userDto, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -50,9 +51,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/books/delete")
-    public Result delete(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result delete(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -62,9 +63,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/add")
-    public Result add(@RequestBody Book book, HttpServletRequest request)
-    {
+    public Result add(@RequestBody Book book, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -74,10 +75,10 @@ public class AdminController {
         }
 
     }
+
     //
     @PostMapping("/books/up")
-    public Result up(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result up(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -87,9 +88,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/books/down")
-    public Result down(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result down(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -99,9 +100,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/books/savebook")
-    public Result saveBook(@RequestBody Book book, HttpServletRequest request)
-    {
+    public Result saveBook(@RequestBody BookDto book, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -111,9 +112,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/getBooks")
-    public Result down(@RequestParam("id") int bookid, HttpServletRequest request)
-    {
+    public Result down(@RequestParam("id") int bookid, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -121,7 +122,7 @@ public class AdminController {
             String detail = book.getDetail();
             List<String> detailList = Arrays.asList(detail.split(";"));
             BookDto bookDto = new BookDto();
-            BeanUtils.copyProperties(book,bookDto);
+            BeanUtils.copyProperties(book, bookDto);
             bookDto.setDetail(detailList);
             return Result.ok(bookDto);
         } else {
@@ -129,20 +130,25 @@ public class AdminController {
         }
 
     }
+
+    //    @PostMapping("/books/img")
+//    public Result uploadImg(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request)
+//    {
+//        String userToken = request.getHeader("token");
+//        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+//        if (is_admin) {
+//            return bookService.upload(file);
+//        } else {
+//            return Result.fail("你没有权限");
+//        }
+//    }
     @PostMapping("/books/img")
-    public Result uploadImg(@RequestParam(value = "file",required = false) MultipartFile file, HttpServletRequest request)
-    {
-        String userToken = request.getHeader("token");
-        boolean is_admin = userService.checkIfisAdminByToken(userToken);
-        if (is_admin) {
-            return bookService.upload(file);
-        } else {
-            return Result.fail("你没有权限");
-        }
+    public Result uploadImg(@RequestParam(value = "file", required = false) MultipartFile file) {
+        return bookService.upload(file);
     }
+
     @PostMapping("/books/save")
-    public Result down(@RequestBody BookDto book, HttpServletRequest request)
-    {
+    public Result down(@RequestBody BookDto book, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -153,9 +159,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/user/delete")
-    public Result deleteUser(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result deleteUser(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -165,10 +171,10 @@ public class AdminController {
         }
 
     }
+
     //提高用户权限
     @PostMapping("/user/up")
-    public Result userUp(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result userUp(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -178,9 +184,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/user/down")
-    public Result userDown(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result userDown(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -190,9 +196,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/listOrder")
-    public Result listOrder(@RequestBody SearchOrderDto searchOrderDto, HttpServletRequest request)
-    {
+    public Result listOrder(@RequestBody SearchOrderDto searchOrderDto, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -202,9 +208,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/orders/send")
-    public Result sendOrder(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result sendOrder(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
@@ -214,9 +220,9 @@ public class AdminController {
         }
 
     }
+
     @PostMapping("/orders/delete")
-    public Result deleteOrder(@RequestBody List<Integer> ids, HttpServletRequest request)
-    {
+    public Result deleteOrder(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {

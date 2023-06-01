@@ -17,7 +17,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")  // 拦截所有请求，通过判断token是否合法来决定是否需要登录
                 .excludePathPatterns("/user/login", "/user/register",
                                     "/user/isValidToken", "/user/getUserInfo",
-                                    "/books/page*", "/books/detail/*");
+                                    "/books/page*", "/books/detail/*","/admin/books/img");
     }
 
     //将对象注入到容器中
