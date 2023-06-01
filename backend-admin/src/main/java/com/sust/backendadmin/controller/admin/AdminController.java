@@ -119,12 +119,12 @@ public class AdminController {
 
     }
 
-
+    //保存图片
     @PostMapping("/books/img")
     public Result uploadImg(@RequestParam(value = "file", required = false) MultipartFile file) {
         return bookService.upload(file);
     }
-
+    //保存更新书籍
     @PostMapping("/books/save")
     public Result down(@RequestBody BookDto book, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -137,7 +137,7 @@ public class AdminController {
         }
 
     }
-
+    //删除用户
     @PostMapping("/user/delete")
     public Result deleteUser(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -147,7 +147,6 @@ public class AdminController {
         } else {
             return Result.fail("你没有权限");
         }
-
     }
 
     //提高用户权限
@@ -162,7 +161,7 @@ public class AdminController {
         }
 
     }
-
+    //降低用户权限
     @PostMapping("/user/down")
     public Result userDown(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -174,7 +173,7 @@ public class AdminController {
         }
 
     }
-
+    //显示订单列表
     @PostMapping("/listOrder")
     public Result listOrder(@RequestBody SearchOrderDto searchOrderDto, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -186,7 +185,7 @@ public class AdminController {
         }
 
     }
-
+    //发货
     @PostMapping("/orders/send")
     public Result sendOrder(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
@@ -198,7 +197,7 @@ public class AdminController {
         }
 
     }
-
+    //删除订单
     @PostMapping("/orders/delete")
     public Result deleteOrder(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");

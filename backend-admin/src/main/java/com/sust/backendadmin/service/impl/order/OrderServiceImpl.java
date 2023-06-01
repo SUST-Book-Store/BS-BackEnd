@@ -226,9 +226,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         List<Order> orderList = this.listByIds(ids);
         if (orderList.size()!=ids.size())
             return Result.fail("存在订单缺失");
+        //判断订单是否存在未付款
         boolean b = orderList.stream().anyMatch(order -> order.getStatus() == 0);
         if (b)
             return Result.fail("存在订单未付款,不可删除");
+        //删除购物车
         boolean c = orderBooksService.remove(Wrappers.<OrderBooks>lambdaQuery().in(OrderBooks::getOrderId, ids));
         if (c)
         {

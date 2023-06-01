@@ -145,8 +145,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Override
     public Result saveBook(BookDto book) {
-        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor()))
-            return Result.fail("请补全信息");
+        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor())||book.getStock()<0||book.getPrice()<0
+               )
+            return Result.fail("信息有误或者缺失");
         String detailString = org.springframework.util.StringUtils.collectionToDelimitedString(book.getDetail(), ";");
         Book book1 = new Book();
         BeanUtils.copyProperties(book,book1);
@@ -160,7 +161,9 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Override
     public Result updateByBookId(BookDto book) {
-
+        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor())||book.getStock()<0||book.getPrice()<0
+        )
+            return Result.fail("信息有误或者缺失");
         String detailString = org.springframework.util.StringUtils.collectionToDelimitedString(book.getDetail(), ";");
         Book book1 = new Book();
         BeanUtils.copyProperties(book,book1);
