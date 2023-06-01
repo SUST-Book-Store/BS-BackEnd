@@ -12,8 +12,8 @@ public class OrderIdCreate {
     //开始时间戳
     private static final long BEGIN_TIMESTAMP = 1672531200L;
     //序列号位数
-    private static final int  COUNT_BITS = 32;
-    private long count;
+    private static final int  COUNT_BITS = 16;
+    private long count = 0;
 
     public long nextId() {
         // 1. 生成时间戳
