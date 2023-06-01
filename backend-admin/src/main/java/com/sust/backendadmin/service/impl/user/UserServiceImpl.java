@@ -241,6 +241,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Result up(List<Integer> ids) {
         List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
+        boolean a = userkList.stream().anyMatch(user -> user.getRole() == 1);
+        if (a)
+            return Result.fail("存在用户已是管理员，无需提升权限");
         List<User> newUsers = userkList.stream()
                 .peek(user -> user.setRole(1))
                 .collect(Collectors.toList());
@@ -257,6 +260,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         boolean b = userkList.stream().anyMatch(user -> user.getRole() == 1);
         if (b)
             return Result.fail("不可以操作其他管理员");
+        boolean bd = userkList.stream().anyMatch(user -> user.getRole() == 0);
+        if (bd)
+            return Result.fail("存在用户已降低至最低权限，无需降低");
         List<User> newUsers = userkList.stream()
                 .peek(user -> user.setRole(0))
                 .collect(Collectors.toList());

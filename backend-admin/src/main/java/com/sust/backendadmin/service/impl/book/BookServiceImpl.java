@@ -13,9 +13,13 @@ import com.sust.backendadmin.dto.BookDto;
 import com.sust.backendadmin.dto.PageListDto;
 import com.sust.backendadmin.dto.SearchBooksDto;
 import com.sust.backendadmin.mapper.BookMapper;
+import com.sust.backendadmin.pojo.Cart;
+import com.sust.backendadmin.pojo.OrderBooks;
 import com.sust.backendadmin.pojo.Result;
 import com.sust.backendadmin.service.book.BookService;
 import com.sust.backendadmin.pojo.Book;
+import com.sust.backendadmin.service.cart.CartService;
+import com.sust.backendadmin.service.orderbooks.OrderBooksService;
 import com.sust.backendadmin.utils.OSSUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +41,10 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
     private BookMapper bookMapper;
     @Autowired
     private OSSUtils ossUtils;
+    @Autowired
+    private CartService cartService;
+    @Autowired
+    private OrderBooksService orderBooksService;
     @Override
     public JSONObject getPage(Integer pageNum, Integer pageSize) {
         IPage<Book> bookIPage = new Page<>(pageNum, pageSize);
@@ -79,11 +87,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     }
 
-    @Override
-    public Result add(Book book) {
 
-        return null;
-    }
 
     @Override
     public Result delete(List<Integer> ids) {
@@ -95,6 +99,10 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         boolean b = bookList.stream().anyMatch(book -> book.getAvailable() == 1);
         if (b)
             return Result.fail("选择图书中存在上架图书");
+        List<Cart> listCarts = cartService.list(Wrappers.<Cart>lambdaQuery().in(Cart::getBookId, ids));
+        List<OrderBooks> listOrderBooks = orderBooksService.list(Wrappers.<OrderBooks>lambdaQuery().in(OrderBooks::getBookId, ids));
+        if (listCarts.size()>0||listOrderBooks.size()>0)
+            return Result.fail("书籍被关联不能删除");
         boolean c = this.removeBatchByIds(ids);
         if (c)
         {
@@ -126,7 +134,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
             return Result.fail("存在图书不存在");
         boolean b = bookList.stream().anyMatch(book -> book.getAvailable() == 0);
         if(b)
-            return Result.fail("存在书籍已经下架，不可重复上架");
+            return Result.fail("存在书籍已经下架，不可重复下架");
         List<Book> newBooks = bookList.stream()
                 .peek(book -> book.setAvailable(0))
                 .collect(Collectors.toList());
