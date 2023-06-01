@@ -2,6 +2,7 @@ package com.sust.backendadmin.service.book;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.sust.backendadmin.dto.BookDto;
 import com.sust.backendadmin.dto.SearchBooksDto;
 import com.sust.backendadmin.pojo.Book;
 import com.sust.backendadmin.pojo.Result;
@@ -26,4 +27,6 @@ public interface BookService extends IService<Book> {
     Result upload(MultipartFile file);
 
     Result saveBook(Book book);
+
+    Result updateByBookId(BookDto book);
 }

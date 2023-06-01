@@ -215,13 +215,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
     @Autowired
     private OrderService orderService;
+
     @Override
     public Result deleteUser(List<Integer> ids) {
+        List<User> userkList = this.listByIds(ids);
+        boolean b = userkList.stream().anyMatch(user -> user.getRole() == 1);
+        if (b)
+        {
+            return Result.fail("选择中存在管理员，无权限删除其他管理员");
+        }
         List<Order> list = orderService.list(Wrappers.<Order>lambdaQuery().in(Order::getUserId, ids));
         if (list.size()!=0)
             return Result.fail("选择用户有订单信息，不能删除");
         if (CollectionUtils.isEmpty(ids))
             return Result.fail("未选择");
+
         boolean c = this.removeBatchByIds(ids);
         if (c)
         {

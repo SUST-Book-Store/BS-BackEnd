@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sust.backendadmin.dto.BookDto;
 import com.sust.backendadmin.dto.PageListDto;
 import com.sust.backendadmin.dto.SearchBooksDto;
 import com.sust.backendadmin.mapper.BookMapper;
@@ -16,6 +17,7 @@ import com.sust.backendadmin.pojo.Result;
 import com.sust.backendadmin.service.book.BookService;
 import com.sust.backendadmin.pojo.Book;
 import com.sust.backendadmin.utils.OSSUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,10 +68,7 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         {
             wrapper.eq(Book::getAvailable,searchBooksDto.getStatus());
         }
-        if (CollectionUtils.isNotEmpty(searchBooksDto.getDates()))
-        {
-            wrapper.between(Book::getPublisher,searchBooksDto.getDates().get(0),searchBooksDto.getDates().get(1));
-        }
+        wrapper.orderByDesc(Book::getCreateTime);
         Page<Book> page = new Page<>( searchBooksDto.getPageNum(),searchBooksDto.getPageSize() );
         page = this.page(page, wrapper);
         PageListDto pageListDto = new PageListDto();
@@ -153,6 +152,22 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
         if (save)
             return Result.ok();
         return Result.fail("请补全信息");
+    }
+
+    @Override
+    public Result updateByBookId(BookDto book) {
+
+        String detailString = org.springframework.util.StringUtils.collectionToDelimitedString(book.getDetail(), ";");
+        Book book1 = new Book();
+        BeanUtils.copyProperties(book,book1);
+        book1.setDetail(detailString);
+        boolean b = this.updateById(book1);
+        if (b)
+        {
+            return Result.ok();
+        }
+        return Result.fail("编辑失败");
+
     }
 
 }

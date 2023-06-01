@@ -16,7 +16,6 @@ public class SearchBooksDto implements Serializable {
     private int pageSize;
     private int pageNum;
     private String name;
-    private List<Date> dates;
     private String author;
     private int status=-1;
     private String type;

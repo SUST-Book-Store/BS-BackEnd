@@ -17,6 +17,7 @@ import com.sust.backendadmin.mapper.UserMapper;
 import com.sust.backendadmin.service.order.OrderService;
 import com.sust.backendadmin.pojo.*;
 import com.sust.backendadmin.service.book.BookService;
+import com.sust.backendadmin.service.orderbooks.OrderBooksService;
 import com.sust.backendadmin.service.user.UserService;
 import com.sust.backendadmin.utils.OrderIdCreate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,6 +217,27 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             return Result.ok();
         }else
             return Result.fail("操作失败");
+
+    }
+    @Autowired
+    private OrderBooksService orderBooksService;
+    @Override
+    public Result deleteByIds(List<Integer> ids) {
+        List<Order> orderList = this.listByIds(ids);
+        if (orderList.size()!=ids.size())
+            return Result.fail("存在订单缺失");
+        boolean b = orderList.stream().anyMatch(order -> order.getStatus() == 0);
+        if (b)
+            return Result.fail("存在订单未付款,不可删除");
+        boolean c = orderBooksService.remove(Wrappers.<OrderBooks>lambdaQuery().in(OrderBooks::getOrderId, ids));
+        if (c)
+        {
+            boolean byIds = this.removeByIds(ids);
+            if (byIds)
+            return Result.ok();
+            else return Result.fail("删除失败");
+        }
+        else return Result.fail("删除失败");
 
     }
 }

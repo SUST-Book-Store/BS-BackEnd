@@ -146,16 +146,8 @@ public class AdminController {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
-            String detailString = StringUtils.collectionToDelimitedString(book.getDetail(), ";");
-            Book book1 = new Book();
-            BeanUtils.copyProperties(book,book1);
-            book1.setDetail(detailString);
-            boolean b = bookService.updateById(book1);
-            if (b)
-            {
-                return Result.ok();
-            }
-            return Result.fail("编辑失败");
+            return bookService.updateByBookId(book);
+
         } else {
             return Result.fail("你没有权限");
         }
@@ -211,12 +203,24 @@ public class AdminController {
 
     }
     @PostMapping("/orders/send")
-    public Result deleteOrder(@RequestBody List<Integer> ids, HttpServletRequest request)
+    public Result sendOrder(@RequestBody List<Integer> ids, HttpServletRequest request)
     {
         String userToken = request.getHeader("token");
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
             return orderService.send(ids);
+        } else {
+            return Result.fail("你没有权限");
+        }
+
+    }
+    @PostMapping("/orders/delete")
+    public Result deleteOrder(@RequestBody List<Integer> ids, HttpServletRequest request)
+    {
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return orderService.deleteByIds(ids);
         } else {
             return Result.fail("你没有权限");
         }
