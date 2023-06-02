@@ -114,6 +114,8 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Override
     public Result up(List<Integer> ids) {
+        if (ids.size()==0)
+            return Result.fail("请选择数据");
         List<Book> bookList = this.list(Wrappers.<Book>lambdaQuery().in(Book::getBookId, ids));
         if (bookList.size()!=ids.size())
             return Result.fail("存在图书不存在");
@@ -129,6 +131,8 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Override
     public Result down(List<Integer> ids) {
+        if (ids.size()==0)
+            return Result.fail("请选择数据");
         List<Book> bookList = this.list(Wrappers.<Book>lambdaQuery().in(Book::getBookId, ids));
         if (bookList.size()!=ids.size())
             return Result.fail("存在图书不存在");

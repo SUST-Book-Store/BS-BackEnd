@@ -222,6 +222,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private OrderBooksService orderBooksService;
     @Override
     public Result deleteByIds(List<Integer> ids) {
+        if (ids.size()==0)
+            return Result.fail("请选择数据");
         List<Order> orderList = this.listByIds(ids);
         if (orderList.size()!=ids.size())
             return Result.fail("存在订单缺失");

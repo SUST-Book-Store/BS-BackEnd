@@ -218,12 +218,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private OrderService orderService;
 
     @Override
-    public Result deleteUser(List<Integer> ids) {
+    public Result deleteUser(List<Integer> ids,int id) {
+        if (ids.size()==0)
+            return Result.fail("请选择数据");
+        User byId = this.getById(id);
         List<User> userkList = this.listByIds(ids);
         boolean b = userkList.stream().anyMatch(user -> user.getRole() == 1);
-        if (b)
+        if (b&&byId.getRole()!=2)
         {
-            return Result.fail("选择中存在管理员，无权限删除其他管理员");
+            return Result.fail("选择中存在管理员，权限不足，请提升权限");
         }
         List<Order> list = orderService.list(Wrappers.<Order>lambdaQuery().in(Order::getUserId, ids));
         if (list.size()!=0)
@@ -240,7 +243,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Result up(List<Integer> ids) {
+    public Result up(List<Integer> ids,int id) {
+        if (ids.size()==0)
+            return Result.fail("请选择数据");
+        User byId = this.getById(id);
+        if (byId.getRole()!=2)
+            return Result.fail("不是超级管理员，没有权限");
         List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
         boolean a = userkList.stream().anyMatch(user -> user.getRole() == 1);
         if (a)
@@ -255,12 +263,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Result down(List<Integer> ids) {
+    public Result down(List<Integer> ids,int id) {
+        if (ids.size()==0)
+            return Result.fail("请选择数据");
+        User byId = this.getById(id);
+        if (byId.getRole()!=2)
+            return Result.fail("不是超级管理员，没有权限");
         List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
-
-        boolean b = userkList.stream().anyMatch(user -> user.getRole() == 1);
-        if (b)
-            return Result.fail("不可以操作其他管理员");
         boolean bd = userkList.stream().anyMatch(user -> user.getRole() == 0);
         if (bd)
             return Result.fail("存在用户已降低至最低权限，无需降低");

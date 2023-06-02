@@ -19,9 +19,9 @@ public interface UserService extends IService<User> {
 
     Result lists(SearchUserDto userDto);
 
-    Result deleteUser(List<Integer> ids);
+    Result deleteUser(List<Integer> ids,int id);
 
-    Result up(List<Integer> ids);
+    Result up(List<Integer> ids,int id);
 
-    Result down(List<Integer> ids);
+    Result down(List<Integer> ids,int id);
 }

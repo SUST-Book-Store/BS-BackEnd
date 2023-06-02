@@ -9,6 +9,7 @@ import com.sust.backendadmin.pojo.Result;
 import com.sust.backendadmin.service.book.BookService;
 import com.sust.backendadmin.service.order.OrderService;
 import com.sust.backendadmin.service.user.UserService;
+import com.sust.backendadmin.utils.UserTokenUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -142,9 +143,10 @@ public class AdminController {
     @PostMapping("/user/delete")
     public Result deleteUser(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
+        int id = UserTokenUtil.GetUserIdByToken(userToken);
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
-            return userService.deleteUser(ids);
+            return userService.deleteUser(ids,id);
         } else {
             return Result.fail("你没有权限");
         }
@@ -154,9 +156,10 @@ public class AdminController {
     @PostMapping("/user/up")
     public Result userUp(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
+        int id = UserTokenUtil.GetUserIdByToken(userToken);
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
-            return userService.up(ids);
+            return userService.up(ids,id);
         } else {
             return Result.fail("你没有权限");
         }
@@ -166,9 +169,10 @@ public class AdminController {
     @PostMapping("/user/down")
     public Result userDown(@RequestBody List<Integer> ids, HttpServletRequest request) {
         String userToken = request.getHeader("token");
+        int id = UserTokenUtil.GetUserIdByToken(userToken);
         boolean is_admin = userService.checkIfisAdminByToken(userToken);
         if (is_admin) {
-            return userService.down(ids);
+            return userService.down(ids,id);
         } else {
             return Result.fail("你没有权限");
         }
