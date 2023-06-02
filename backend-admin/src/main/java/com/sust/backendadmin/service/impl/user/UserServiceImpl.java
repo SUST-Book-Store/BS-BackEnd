@@ -139,8 +139,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         System.out.println(users);
         System.out.println(users.get(0));
         System.out.println(users.get(0).getRole());
-        boolean isAdmin = users.get(0).getRole().equals(1);
-        if (isAdmin) {
+
+        if (users.get(0).getRole().equals(1)||users.get(0).getRole().equals(2))
+        {
             return true;
         } else {
             return false;

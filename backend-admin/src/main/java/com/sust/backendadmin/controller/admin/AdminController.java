@@ -39,18 +39,7 @@ public class AdminController {
             return Result.fail("你没有权限");
         }
     }
-    //显示用户列表
-    @PostMapping("/userList")
-    public Result userList(@RequestBody SearchUserDto userDto, HttpServletRequest request) {
-        String userToken = request.getHeader("token");
-        boolean is_admin = userService.checkIfisAdminByToken(userToken);
-        if (is_admin) {
-            return userService.lists(userDto);
-        } else {
-            return Result.fail("你没有权限");
-        }
 
-    }
     //删除书籍
     @PostMapping("/books/delete")
     public Result delete(@RequestBody List<Integer> ids, HttpServletRequest request) {
@@ -132,6 +121,18 @@ public class AdminController {
         if (is_admin) {
             return bookService.updateByBookId(book);
 
+        } else {
+            return Result.fail("你没有权限");
+        }
+
+    }
+    //显示用户列表
+    @PostMapping("/userList")
+    public Result userList(@RequestBody SearchUserDto userDto, HttpServletRequest request) {
+        String userToken = request.getHeader("token");
+        boolean is_admin = userService.checkIfisAdminByToken(userToken);
+        if (is_admin) {
+            return userService.lists(userDto);
         } else {
             return Result.fail("你没有权限");
         }
