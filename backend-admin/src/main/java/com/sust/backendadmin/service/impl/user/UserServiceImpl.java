@@ -251,10 +251,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User byId = this.getById(id);
         if (byId.getRole()!=2)
             return Result.fail("不是超级管理员，没有权限");
+        if (ids.contains(id))
+            return Result.fail("不能删除自己");
         List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
         boolean a = userkList.stream().anyMatch(user -> user.getRole() == 1);
-        boolean c = userkList.stream().anyMatch(user -> user.getRole() == 2);
-        if (a||c)
+
+        if (a)
             return Result.fail("存在用户已是管理员，无需提升权限");
         List<User> newUsers = userkList.stream()
                 .peek(user -> user.setRole(1))
@@ -272,6 +274,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         User byId = this.getById(id);
         if (byId.getRole()!=2)
             return Result.fail("不是超级管理员，没有权限");
+        if (ids.contains(id))
+            return Result.fail("不能操作自己");
         List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
         boolean bd = userkList.stream().anyMatch(user -> user.getRole() == 0);
         if (bd)
