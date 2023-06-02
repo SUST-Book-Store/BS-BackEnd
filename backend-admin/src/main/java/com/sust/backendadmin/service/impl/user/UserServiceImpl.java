@@ -252,7 +252,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (byId.getRole()!=2)
             return Result.fail("不是超级管理员，没有权限");
         if (ids.contains(id))
-            return Result.fail("不能删除自己");
+            return Result.fail("不能操作自己");
         List<User> userkList = this.list(Wrappers.<User>lambdaQuery().in(User::getUserId, ids));
         boolean a = userkList.stream().anyMatch(user -> user.getRole() == 1);
 
