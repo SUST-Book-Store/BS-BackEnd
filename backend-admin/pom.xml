@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.sust</groupId>
 	<artifactId>backend-admin</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-RELEASE</version>
 	<name>backend-admin</name>
 	<description>backend-admin</description>
 	<properties>
