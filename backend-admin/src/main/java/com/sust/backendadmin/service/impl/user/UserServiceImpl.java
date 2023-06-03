@@ -166,7 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             data.put("phone", user.getPhone());
             data.put("sex", user.getSex());
             data.put("address", user.getAddress());
-            if (user.getRole().intValue() == 1) {
+            if (user.getRole().intValue() == 1 || user.getRole().intValue() == 2) {
                 data.put("is_admin", true);
             } else {
                 data.put("is_admin", false);
