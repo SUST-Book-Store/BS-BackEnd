@@ -22,8 +22,6 @@ public interface OrderService extends IService<Order> {
 
     Result listOrder(SearchOrderDto searchOrderDto);
 
-
-
     Result send(List<Integer> ids);
 
     Result deleteByIds(List<Integer> ids);
