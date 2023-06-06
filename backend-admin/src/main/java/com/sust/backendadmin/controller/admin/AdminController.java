@@ -40,7 +40,6 @@ public class AdminController {
             return Result.fail("你没有权限");
         }
     }
-
     //删除书籍
     @PostMapping("/books/delete")
     public Result delete(@RequestBody List<Integer> ids, HttpServletRequest request) {
@@ -53,7 +52,6 @@ public class AdminController {
         }
 
     }
-
     //上架书籍
     @PostMapping("/books/up")
     public Result up(@RequestBody List<Integer> ids, HttpServletRequest request) {
@@ -108,7 +106,6 @@ public class AdminController {
         }
 
     }
-
     //保存图片
     @PostMapping("/books/img")
     public Result uploadImg(@RequestParam(value = "file", required = false) MultipartFile file) {
