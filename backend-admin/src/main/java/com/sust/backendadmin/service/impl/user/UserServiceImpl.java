@@ -11,9 +11,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.sust.backendadmin.dto.PageListDto;
 import com.sust.backendadmin.dto.SearchUserDto;
 import com.sust.backendadmin.mapper.UserMapper;
+import com.sust.backendadmin.pojo.Cart;
 import com.sust.backendadmin.pojo.Order;
 import com.sust.backendadmin.pojo.Result;
 import com.sust.backendadmin.pojo.User;
+import com.sust.backendadmin.service.cart.CartService;
 import com.sust.backendadmin.service.order.OrderService;
 import com.sust.backendadmin.service.user.UserService;
 import com.sust.backendadmin.utils.GetEncryptedStrUtil;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CartService cartService;
 
     @Override
     public JSONObject getUserLoginResult(String phone, String password) {
@@ -231,8 +235,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return Result.fail("选择中存在管理员，权限不足，请提升权限");
         }
         List<Order> list = orderService.list(Wrappers.<Order>lambdaQuery().in(Order::getUserId, ids));
-        if (list.size()!=0)
-            return Result.fail("选择用户有订单信息，不能删除");
+        List<Cart> cartList = cartService.list(Wrappers.<Cart>lambdaQuery().in(Cart::getUserId, ids));
+        if (list.size()!=0 || cartList.size() != 0)
+            return Result.fail("选择用户被其他表关联，不能删除");
         if (CollectionUtils.isEmpty(ids))
             return Result.fail("未选择");
 
