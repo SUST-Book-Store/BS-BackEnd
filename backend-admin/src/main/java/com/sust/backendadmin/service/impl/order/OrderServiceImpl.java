@@ -1,6 +1,6 @@
 package com.sust.backendadmin.service.impl.order;
 
-import com.alibaba.fastjson.JSONObject;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -18,7 +18,6 @@ import com.sust.backendadmin.service.order.OrderService;
 import com.sust.backendadmin.pojo.*;
 import com.sust.backendadmin.service.book.BookService;
 import com.sust.backendadmin.service.orderbooks.OrderBooksService;
-import com.sust.backendadmin.service.user.UserService;
 import com.sust.backendadmin.utils.OrderIdCreate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,11 +83,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             User user = userList.get(0);
             address = user.getAddress();
         }
-        if (address == null || address.toString() == "") {
+        if (StrUtil.isBlank(address)) {
             return Result.fail("invalidaddr");
         }
         Order order = new Order();
-        order.setAddress(address.toString());
+        order.setAddress(address);
         order.setUserId(userId);
         order.setNo(orderIdCreate.nextId());
         order.setStatus(0);
@@ -132,7 +130,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             User user = userList.get(0);
             address = user.getAddress();
         }
-        if (address == null || address.toString() == "") {
+        if (StrUtil.isBlank(address)) {
             return Result.fail("invalidaddr");
         }
         Order order = new Order();
@@ -167,6 +165,19 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             res.add(orderInfoDto);
         }
         return Result.ok(res);
+    }
+
+    @Override
+    public Result deleteById(Integer orderId, Integer userId) {
+        Order order = orderMapper.selectById(orderId);
+        if (order == null) {
+            return Result.fail("订单已被删除");
+        }
+        if (!order.getUserId().equals(userId)) {
+            return Result.fail("无权限");
+        }
+        orderMapper.deleteById(orderId);
+        return Result.ok();
     }
 
     @Override
@@ -241,5 +252,16 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
             else return Result.fail("删除失败");
         }
         else return Result.fail("删除失败");
+    }
+
+    @Override
+    public Result getByNo(Long no) {
+        QueryWrapper<Order> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("no", no);
+        Order order = getOne(queryWrapper);
+        if (order == null) {
+            return Result.fail("未知错误");
+        }
+        return Result.ok(order);
     }
 }

@@ -20,9 +20,13 @@ public interface OrderService extends IService<Order> {
 
     Result getOrderInfoById(Integer orderId);
 
+    Result deleteById(Integer orderId, Integer userId);
+
     Result listOrder(SearchOrderDto searchOrderDto);
 
     Result send(List<Integer> ids);
 
     Result deleteByIds(List<Integer> ids);
+
+    Result getByNo(Long no);
 }

@@ -21,6 +21,34 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @PostMapping("/delete/{id}")
+    public Result deleteById(@PathVariable Integer id, HttpServletRequest request) {
+        String userToken = request.getHeader("token");
+        int userId = UserTokenUtil.GetUserIdByToken(userToken);//獲取userId
+        if (userId == -1) {
+            return Result.fail("登录过期，请重新登录");
+        }
+        if (id == null) {
+            return Result.fail("该订单已被删除");
+        }
+        return orderService.deleteById(id, userId);
+    }
+
+    @GetMapping("/get/no")
+    public Result getOrder(@RequestParam Map<String, String> data, HttpServletRequest request) {
+        String userToken = request.getHeader("token");
+        int userId = UserTokenUtil.GetUserIdByToken(userToken);//獲取userId
+        if (userId == -1) {
+            return Result.fail("登录过期，请重新登录");
+        }
+        if (StrUtil.isBlank(data.get("no"))) {
+            return Result.fail("传入参数有误");
+        }
+        Long no = Long.parseLong(data.get("no"));
+        return orderService.getByNo(no);
+    }
+
+
     @GetMapping("/cancel/{id}")
     public Result cancelOrder(@PathVariable Integer id) {
         if (id == null) {
@@ -54,7 +82,7 @@ public class OrderController {
     }
 
     @GetMapping("/page")
-    public Result add(@RequestParam Map<String, String> data, HttpServletRequest request) {
+    public Result getPage(@RequestParam Map<String, String> data, HttpServletRequest request) {
         String userToken = request.getHeader("token");
         int userId = UserTokenUtil.GetUserIdByToken(userToken);//獲取userId
         if (userId == -1) {
