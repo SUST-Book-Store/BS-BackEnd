@@ -157,7 +157,8 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Override
     public Result saveBook(BookDto book) {
-        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor())||book.getStock()<0||book.getPrice()<0
+        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor())||book.getStock()<0||book.getPrice()<0||StringUtils.isBlank(book.getPhoto())
+                ||book.getDetail().size()==0
                )
             return Result.fail("信息有误或者缺失");
         String detailString = org.springframework.util.StringUtils.collectionToDelimitedString(book.getDetail(), ";");
@@ -173,7 +174,8 @@ public class BookServiceImpl extends ServiceImpl<BookMapper, Book> implements Bo
 
     @Override
     public Result updateByBookId(BookDto book) {
-        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor())||book.getStock()<0||book.getPrice()<0
+        if (StringUtils.isBlank(book.getName())||StringUtils.isBlank(book.getIsbn())||StringUtils.isBlank(book.getAuthor())||book.getStock()<0||book.getPrice()<0||StringUtils.isBlank(book.getPhoto())
+                ||book.getDetail().isEmpty()
         )
             return Result.fail("信息有误或者缺失");
         String detailString = org.springframework.util.StringUtils.collectionToDelimitedString(book.getDetail(), ";");
